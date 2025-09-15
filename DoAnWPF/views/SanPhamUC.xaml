@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="DoAnWPF.views.SanPhamUC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DoAnWPF.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="SanPhamUC_Loaded">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <!-- Nhập thông tin sản phẩm -->
+        <Border Grid.Row="0" BorderThickness="1" BorderBrush="Gray" Padding="10" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Cột 1 -->
+                <StackPanel Margin="5">
+                    <TextBlock Text="Tên sản phẩm"/>
+                    <TextBox x:Name="txtTenSanPham"/>
+                </StackPanel>
+
+                <!-- Cột 2 -->
+                <StackPanel Margin="5" Grid.Column="1">
+                    <TextBlock Text="Loại sản phẩm"/>
+                    <ComboBox x:Name="cbLoaiSanPham"/>
+                </StackPanel>
+
+                <!-- Cột 3 -->
+                <StackPanel Margin="5" Grid.Column="2">
+                    <TextBlock Text="Đơn vị tính"/>
+                    <ComboBox x:Name="cbDonViTinh"/>
+                </StackPanel>
+
+                <!-- Cột 4 -->
+                <StackPanel Margin="5" Grid.Column="3">
+                    <TextBlock Text="Số lượng tồn"/>
+                    <TextBox x:Name="txtSoLuongTon"/>
+                </StackPanel>
+
+                <!-- Cột 5 -->
+                <StackPanel Margin="5" Grid.Column="4">
+                    <TextBlock Text="Tên hình ảnh"/>
+                    <TextBox x:Name="txtHinhAnh"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Giá nhập, giá bán -->
+        <Border Grid.Row="1" BorderThickness="1" BorderBrush="Gray" Padding="10" Margin="5">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="5">
+                    <TextBlock Text="Giá nhập"/>
+                    <TextBox x:Name="txtGiaNhap"/>
+                </StackPanel>
+
+                <StackPanel Margin="5" Grid.Column="1">
+                    <TextBlock Text="Giá bán"/>
+                    <TextBox x:Name="txtGiaBan"/>
+                </StackPanel>
+
+                <StackPanel Margin="5" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                    <Button x:Name="btnThem" Content="Thêm" Width="100" Margin="5" 
+                            Click="BtnThem_Click" 
+                            Background="DodgerBlue" Foreground="White"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- DataGrid hiển thị sản phẩm -->
+        <Border Grid.Row="2" BorderThickness="1" BorderBrush="Gray" Padding="5" Margin="5">
+            <DataGrid x:Name="dgSanPham" AutoGenerateColumns="False" IsReadOnly="True" 
+                      SelectionChanged="DgSanPham_SelectionChanged" Loaded="DgSanPham_Loaded">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding SanPhamID}" Width="50"/>
+                    <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding TenSanPham}" Width="200"/>
+                    <DataGridTextColumn Header="Loại" Binding="{Binding LoaiSanPham.TenLoai}" Width="150"/>
+                    <DataGridTextColumn Header="Đơn vị" Binding="{Binding DonViTinh.TenDonVi}" Width="100"/>
+                    <DataGridTextColumn Header="Giá nhập" Binding="{Binding GiaNhap}" Width="100"/>
+                    <DataGridTextColumn Header="Giá bán" Binding="{Binding GiaBan}" Width="100"/>
+                    <DataGridTextColumn Header="Số lượng tồn" Binding="{Binding SoLuongTon}" Width="100"/>
+                    <DataGridTemplateColumn Header="Hình ảnh" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding HinhAnh}" 
+                                       Width="50" Height="50" Stretch="UniformToFill" Margin="5"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Hành động" Width="150">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="Sửa" Width="60" Margin="2"
+                                            Background="Gold" Foreground="Black"/>
+
+                                    <Button Content="Xóa" Width="60" Margin="2"
+                                        Background="Red" Foreground="White"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>
