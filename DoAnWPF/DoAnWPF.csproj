@@ -106,6 +106,15 @@
     <Compile Include="views\pos.xaml.cs">
       <DependentUpon>pos.xaml</DependentUpon>
     </Compile>
+    <Compile Include="views\QLDVT.xaml.cs">
+      <DependentUpon>QLDVT.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\QLHoaDon.xaml.cs">
+      <DependentUpon>QLHoaDon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\QLLH.xaml.cs">
+      <DependentUpon>QLLH.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\SanPhamUC.xaml.cs">
       <DependentUpon>SanPhamUC.xaml</DependentUpon>
     </Compile>
@@ -124,6 +133,18 @@
     <Page Include="views\pos.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="views\QLDVT.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\QLHoaDon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\QLLH.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\SanPhamUC.xaml">
       <SubType>Designer</SubType>

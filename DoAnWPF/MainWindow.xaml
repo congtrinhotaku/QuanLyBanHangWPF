@@ -49,7 +49,7 @@
             </Button>
 
             <!-- Nút Loại sản phẩm -->
-            <Button x:Name="BtnLoaiSanPham" Style="{StaticResource SidebarButton}" >
+            <Button x:Name="BtnLoaiSanPham" Style="{StaticResource SidebarButton}" Click="BtnLoaiSanPham_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <fa:ImageAwesome Icon="Tag" Width="24" Height="24" Margin="0,0,10,0" Foreground="White"/>
                     <TextBlock Text="Loại sản phẩm" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
@@ -57,12 +57,13 @@
             </Button>
 
             <!-- Nút Đơn vị đo -->
-            <Button x:Name="BtnDonViDo" Style="{StaticResource SidebarButton}">
+            <Button x:Name="BtnDonViDo" Style="{StaticResource SidebarButton}" Click="BtnDonViDo_Click">
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <fa:ImageAwesome Icon="BalanceScale" Width="24" Height="24" Margin="0,0,10,0" Foreground="White"/>
                     <TextBlock Text="Đơn vị đo" VerticalAlignment="Center" Foreground="White" FontSize="14"/>
                 </StackPanel>
             </Button>
+
 
             <!-- Nút Khách hàng -->
             <Button x:Name="BtnKhachHang" Style="{StaticResource SidebarButton}" >
@@ -73,7 +74,7 @@
             </Button>
 
             <!-- Nút Hóa đơn -->
-            <Button x:Name="BtnHoaDon" Style="{StaticResource SidebarButton}" >
+            <Button x:Name="BtnHoaDon" Style="{StaticResource SidebarButton}" Click="BtnHoaDon_Click" >
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
                     <fa:ImageAwesome Icon="File" Width="24" Height="24" Margin="0,0,10,0" Foreground="White"/>
                     <TextBlock Text="Hóa đơn" VerticalAlignment="Center" Foreground="White" FontSize="14"/>

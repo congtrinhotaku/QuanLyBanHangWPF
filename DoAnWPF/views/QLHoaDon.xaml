@@ -1,0 +1,79 @@
+﻿<UserControl x:Class="DoAnWPF.views.QLHoaDon"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000">
+
+    <Grid Background="White" Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Thanh công cụ -->
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <TextBox x:Name="txtTimKiem" Width="200" Height="30" Margin="0 0 10 0" VerticalContentAlignment="Center"/>
+            <Button Content="Tìm kiếm" Width="100" Margin="0 0 10 0"/>
+            <Button Content="Sửa hóa đơn" Width="120" Margin="0 0 10 0" Background="#2196F3" Foreground="White"/>
+            <Button Content="Xóa" Width="80"  Margin="0 0 10 0" Background="#F44336" Foreground="White"/>
+        </StackPanel>
+
+        <!-- Danh sách hóa đơn -->
+        <GroupBox Header="Danh sách hóa đơn" Grid.Row="1">
+            <DataGrid x:Name="DG_HoaDon"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      
+                      RowHeight="35">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Mã Hóa Đơn" Binding="{Binding HoaDonID}" Width="*"/>
+                    <DataGridTextColumn Header="Ngày Lập" Binding="{Binding NgayLap}" Width="*"/>
+                    <DataGridTextColumn Header="Khách Hàng" Binding="{Binding TenKhach}" Width="*"/>
+                    <DataGridTextColumn Header="Tổng Tiền" Binding="{Binding TongTien}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </GroupBox>
+
+        <!-- Chi tiết hóa đơn -->
+        <GroupBox Header="Chi tiết hóa đơn" Grid.Row="2" Margin="0 10 0 0">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Thông tin chung -->
+                <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+                    <Label Content="Mã Hóa Đơn:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtMaHD" Width="100" Margin="5 0"/>
+                    <Label Content="Ngày Lập:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtNgayLap" Width="120" Margin="5 0"/>
+                    <Label Content="Khách Hàng:" VerticalAlignment="Center"/>
+                    <TextBox x:Name="txtKhachHang" Width="200" Margin="5 0"/>
+                </StackPanel>
+
+                <!-- Danh sách sản phẩm -->
+                <DataGrid x:Name="DG_ChiTiet"
+                          Grid.Row="1"
+                          AutoGenerateColumns="False"
+                          CanUserAddRows="True"
+                          IsReadOnly="False"
+                          RowHeight="30">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Mã SP" Binding="{Binding SanPhamID}" Width="*"/>
+                        <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding TenSanPham}" Width="2*"/>
+                        <DataGridTextColumn Header="Đơn vị" Binding="{Binding TenDonVi}" Width="*"/>
+                        <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="Đơn giá" Binding="{Binding DonGia}" Width="*"/>
+                        <DataGridTextColumn Header="Thành tiền" Binding="{Binding ThanhTien}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

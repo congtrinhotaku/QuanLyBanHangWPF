@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace WpfApp2.Views
+namespace DoAnWPF.Views
 {
     public partial class pos : UserControl
     {
