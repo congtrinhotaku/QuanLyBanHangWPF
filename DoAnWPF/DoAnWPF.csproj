@@ -112,6 +112,9 @@
     <Compile Include="views\QLHoaDon.xaml.cs">
       <DependentUpon>QLHoaDon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="views\QLKH.xaml.cs">
+      <DependentUpon>QLKH.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\QLLH.xaml.cs">
       <DependentUpon>QLLH.xaml</DependentUpon>
     </Compile>
@@ -139,6 +142,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\QLHoaDon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\QLKH.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

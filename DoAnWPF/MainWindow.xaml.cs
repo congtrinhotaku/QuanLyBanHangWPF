@@ -36,5 +36,8 @@ namespace DoAnWPF
         {
             MainContent.Content = new QLDVT(); // load Đơn vị đo
         }
+        private void BtnKhachHang_Click(object sender, RoutedEventArgs e) {
+            MainContent.Content = new QLKH();
+        }
     }
 }
