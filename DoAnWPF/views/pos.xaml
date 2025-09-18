@@ -11,8 +11,8 @@
     </UserControl.Resources>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
 
         <!-- LEFT: Categories + Products -->
@@ -121,12 +121,12 @@
 
             <StackPanel Grid.Row="1">
                 <TextBlock Text="Sản phẩm" FontWeight="Bold" FontSize="16" Margin="0,0,0,6"/>
-                <ListView x:Name="CartList" Height="320" Width="430">
+                <ListView x:Name="CartList" Height="320" Width="380">
                     <ListView.View>
                         <GridView>
-                            <GridViewColumn Header="Tên" Width="140" DisplayMemberBinding="{Binding Name}"/>
+                            <GridViewColumn Header="Tên" Width="100" DisplayMemberBinding="{Binding Name}"/>
                             <GridViewColumn Header="Giá" Width="80" DisplayMemberBinding="{Binding Price}"/>
-                            <GridViewColumn Header="SL" Width="110">
+                            <GridViewColumn Header="SL" Width="100">
                                 <GridViewColumn.CellTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
