@@ -71,37 +71,38 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ChiTietHoaDon.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DoAnWPFModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoAnWPFModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DoAnWPFModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DoAnWPFModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>DoAnWPFModel.edmx</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
     <Compile Include="DonViTinh.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
     <Compile Include="HoaDon.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="views\ImagePathConverter.cs" />
     <Compile Include="KhachHang.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
     <Compile Include="LoaiSanPham.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="QLBHModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLBHModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="QLBHModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="QLBHModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLBHModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="SanPham.cs">
-      <DependentUpon>DoAnWPFModel.tt</DependentUpon>
+      <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
     <Compile Include="views\pos.xaml.cs">
       <DependentUpon>pos.xaml</DependentUpon>
@@ -176,17 +177,17 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="DoAnWPFModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>DoAnWPFModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="DoAnWPFModel.edmx.diagram">
-      <DependentUpon>DoAnWPFModel.edmx</DependentUpon>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <EntityDeploy Include="QLBHModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>QLBHModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="QLBHModel.edmx.diagram">
+      <DependentUpon>QLBHModel.edmx</DependentUpon>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -196,16 +197,19 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DoAnWPFModel.Context.tt">
+    <Content Include="QLBHModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DoAnWPFModel.edmx</DependentUpon>
-      <LastGenOutput>DoAnWPFModel.Context.cs</LastGenOutput>
+      <DependentUpon>QLBHModel.edmx</DependentUpon>
+      <LastGenOutput>QLBHModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="DoAnWPFModel.tt">
+    <Content Include="QLBHModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>DoAnWPFModel.edmx</DependentUpon>
-      <LastGenOutput>DoAnWPFModel.cs</LastGenOutput>
+      <DependentUpon>QLBHModel.edmx</DependentUpon>
+      <LastGenOutput>QLBHModel.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="uploads\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -7,7 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="SanPhamUC_Loaded">
-
+    <UserControl.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"/>
+    </UserControl.Resources>
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -64,6 +66,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
@@ -77,10 +80,16 @@
                     <TextBox x:Name="txtGiaBan"/>
                 </StackPanel>
 
-                <StackPanel Margin="5" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <StackPanel Margin="5" Grid.Column="2" HorizontalAlignment="Left">
+                    <TextBlock Text="Ảnh sản phẩm"/>
+                    <Button x:Name="btnUploadAnh" Content="Upload ảnh" Width="120" 
+                    Click="BtnUploadAnh_Click" Background="Green" Foreground="White"/>
+                </StackPanel>
+
+                <StackPanel Margin="5" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
                     <Button x:Name="btnThem" Content="Thêm" Width="100" Margin="5" 
-                            Click="BtnThem_Click" 
-                            Background="DodgerBlue" Foreground="White"/>
+                    Click="BtnThem_Click" 
+                    Background="DodgerBlue" Foreground="White"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -97,11 +106,11 @@
                     <DataGridTextColumn Header="Giá nhập" Binding="{Binding GiaNhap}" Width="100"/>
                     <DataGridTextColumn Header="Giá bán" Binding="{Binding GiaBan}" Width="100"/>
                     <DataGridTextColumn Header="Số lượng tồn" Binding="{Binding SoLuongTon}" Width="100"/>
-                    <DataGridTemplateColumn Header="Hình ảnh" Width="150">
+                    <DataGridTemplateColumn Header="Hình ảnh" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Image Source="{Binding HinhAnh}" 
-                                       Width="50" Height="50" Stretch="UniformToFill" Margin="5"/>
+                                <Image Source="{Binding HinhAnh, Converter={StaticResource ImagePathConverter}}"
+                           Width="100" Height="80" Stretch="UniformToFill"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

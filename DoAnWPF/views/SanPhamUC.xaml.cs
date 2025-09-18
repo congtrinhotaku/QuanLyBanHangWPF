@@ -1,6 +1,8 @@
 ﻿using DoAnWPF;            // chứa DbContext và entity SanPham
 using DoAnWPF.views;      // namespace view
+using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -56,7 +58,7 @@ namespace DoAnWPF.views
                     SoLuongTon = int.Parse(txtSoLuongTon.Text),
                     GiaNhap = decimal.Parse(txtGiaNhap.Text),
                     GiaBan = decimal.Parse(txtGiaBan.Text),
-                    //HinhAnh = txtHinhAnh.Text
+                    HinhAnh = uploadedImagePath,
                 };
 
                 db.SanPhams.Add(sp);
@@ -70,6 +72,37 @@ namespace DoAnWPF.views
                 MessageBox.Show("Lỗi: " + ex.Message);
             }
         }
+        private string uploadedImagePath = null;
+
+        private void BtnUploadAnh_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog();
+            openFile.Filter = "Image files (*.jpg;*.jpeg;*.png;*.gif)|*.jpg;*.jpeg;*.png;*.gif";
+            if (openFile.ShowDialog() == true)
+            {
+                // Thư mục lưu ảnh
+                // Lấy thư mục gốc project (cha của bin\Debug\...)
+                string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
+                string uploadsFolder = Path.Combine(projectDir, "uploads");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                // Đặt tên file duy nhất
+                string fileName = Guid.NewGuid().ToString() + Path.GetExtension(openFile.FileName);
+                string destPath = Path.Combine(uploadsFolder, fileName);
+
+                // Copy file
+                File.Copy(openFile.FileName, destPath, true);
+
+                // Lưu đường dẫn relative để hiển thị và DB
+                uploadedImagePath = "uploads/" + fileName;
+
+                MessageBox.Show("Upload ảnh thành công!");
+            }
+        }
+
+
 
     }
 }

@@ -2,9 +2,13 @@
              x:Name="Root"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DoAnWPF.views"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <local:ImagePathConverter x:Key="ImagePathConverter"/>
+    </UserControl.Resources>
     <Grid Background="White">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
@@ -59,7 +63,7 @@
                                     Background="Transparent" BorderThickness="0" Padding="0" Margin="6">
                                 <Border Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Width="150" Padding="8">
                                     <StackPanel>
-                                        <Image Source="{Binding ImagePath}" Height="80" Stretch="Uniform"/>
+                                        <Image Source="{Binding HinhAnh, Converter={StaticResource ImagePathConverter}}" Height="80" Stretch="Uniform"/>
                                         <TextBlock Text="{Binding TenSanPham}" FontWeight="Bold" TextWrapping="Wrap" Margin="0,6,0,0"/>
                                         <TextBlock Text="{Binding GiaBan, StringFormat={}{0:N0}}" Foreground="Green" FontWeight="Bold" Margin="0,6,0,0"/>
                                     </StackPanel>
