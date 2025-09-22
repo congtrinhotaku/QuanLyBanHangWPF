@@ -1,5 +1,4 @@
 ﻿using DoAnWPF;            // chứa DbContext và entity SanPham
-using DoAnWPF.views;      // namespace view
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -12,6 +11,8 @@ namespace DoAnWPF.views
     public partial class SanPhamUC : UserControl
     {
         DoanWPFEntities db = new DoanWPFEntities();
+        private string uploadedImagePath = null;
+        private int selectedSanPhamId = -1;
 
         public SanPhamUC()
         {
@@ -34,11 +35,8 @@ namespace DoAnWPF.views
         public void loadData()
         {
             dgSanPham.ItemsSource = db.SanPhams.ToList();
-        }
-
-        private void DgSanPham_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            // có thể viết thêm để load thông tin sp khi chọn
+            dgSanPham.SelectedIndex = -1;
+            ClearForm();
         }
 
         private void DgSanPham_Loaded(object sender, RoutedEventArgs e)
@@ -46,11 +44,27 @@ namespace DoAnWPF.views
             loadData();
         }
 
+        private void DgSanPham_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (dgSanPham.SelectedItem is SanPham sp)
+            {
+                selectedSanPhamId = sp.SanPhamID;
+                txtTenSanPham.Text = sp.TenSanPham;
+                cbLoaiSanPham.SelectedValue = sp.LoaiID;
+                cbDonViTinh.SelectedValue = sp.DonViID;
+                txtSoLuongTon.Text = sp.SoLuongTon.ToString();
+                txtGiaNhap.Text = sp.GiaNhap.ToString();
+                txtGiaBan.Text = sp.GiaBan.ToString();
+                txtHinhAnh.Text = sp.HinhAnh;
+                uploadedImagePath = sp.HinhAnh;
+            }
+        }
+
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var sp = new DoAnWPF.SanPham()
+                var sp = new SanPham()
                 {
                     TenSanPham = txtTenSanPham.Text,
                     LoaiID = (int)cbLoaiSanPham.SelectedValue,
@@ -69,10 +83,69 @@ namespace DoAnWPF.views
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi khi thêm: " + ex.Message);
             }
         }
-        private string uploadedImagePath = null;
+
+        private void BtnSua_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (selectedSanPhamId == -1)
+                {
+                    MessageBox.Show("Vui lòng chọn sản phẩm cần sửa!");
+                    return;
+                }
+
+                var sp = db.SanPhams.FirstOrDefault(x => x.SanPhamID == selectedSanPhamId);
+                if (sp != null)
+                {
+                    sp.TenSanPham = txtTenSanPham.Text;
+                    sp.LoaiID = (int)cbLoaiSanPham.SelectedValue;
+                    sp.DonViID = (int)cbDonViTinh.SelectedValue;
+                    sp.SoLuongTon = int.Parse(txtSoLuongTon.Text);
+                    sp.GiaNhap = decimal.Parse(txtGiaNhap.Text);
+                    sp.GiaBan = decimal.Parse(txtGiaBan.Text);
+                    sp.HinhAnh = uploadedImagePath;
+
+                    db.SaveChanges();
+                    loadData();
+                    MessageBox.Show("Cập nhật sản phẩm thành công!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi sửa: " + ex.Message);
+            }
+        }
+
+        private void BtnXoa_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (selectedSanPhamId == -1)
+                {
+                    MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!");
+                    return;
+                }
+
+                var sp = db.SanPhams.FirstOrDefault(x => x.SanPhamID == selectedSanPhamId);
+                if (sp != null)
+                {
+                    if (MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        db.SanPhams.Remove(sp);
+                        db.SaveChanges();
+                        loadData();
+                        MessageBox.Show("Xóa sản phẩm thành công!");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi xóa: " + ex.Message);
+            }
+        }
 
         private void BtnUploadAnh_Click(object sender, RoutedEventArgs e)
         {
@@ -80,29 +153,35 @@ namespace DoAnWPF.views
             openFile.Filter = "Image files (*.jpg;*.jpeg;*.png;*.gif)|*.jpg;*.jpeg;*.png;*.gif";
             if (openFile.ShowDialog() == true)
             {
-                // Thư mục lưu ảnh
-                // Lấy thư mục gốc project (cha của bin\Debug\...)
                 string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
                 string uploadsFolder = Path.Combine(projectDir, "uploads");
 
                 if (!Directory.Exists(uploadsFolder))
                     Directory.CreateDirectory(uploadsFolder);
 
-                // Đặt tên file duy nhất
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(openFile.FileName);
                 string destPath = Path.Combine(uploadsFolder, fileName);
 
-                // Copy file
                 File.Copy(openFile.FileName, destPath, true);
 
-                // Lưu đường dẫn relative để hiển thị và DB
                 uploadedImagePath = "uploads/" + fileName;
+                txtHinhAnh.Text = uploadedImagePath;
 
                 MessageBox.Show("Upload ảnh thành công!");
             }
         }
 
-
-
+        private void ClearForm()
+        {
+            txtTenSanPham.Clear();
+            cbLoaiSanPham.SelectedIndex = -1;
+            cbDonViTinh.SelectedIndex = -1;
+            txtSoLuongTon.Clear();
+            txtGiaNhap.Clear();
+            txtGiaBan.Clear();
+            txtHinhAnh.Clear();
+            uploadedImagePath = null;
+            selectedSanPhamId = -1;
+        }
     }
 }

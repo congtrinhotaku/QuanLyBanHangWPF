@@ -14,7 +14,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- Nhập thông tin sản phẩm -->
@@ -86,16 +87,23 @@
                     Click="BtnUploadAnh_Click" Background="Green" Foreground="White"/>
                 </StackPanel>
 
-                <StackPanel Margin="5" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                    <Button x:Name="btnThem" Content="Thêm" Width="100" Margin="5" 
-                    Click="BtnThem_Click" 
-                    Background="DodgerBlue" Foreground="White"/>
-                </StackPanel>
+               
             </Grid>
         </Border>
+        <Grid Grid.Row="2" HorizontalAlignment="Center">
+            <StackPanel Margin="5" Grid.Column="3" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                <Button x:Name="btnThem" Content="Thêm" Width="100" Margin="5" 
+                        Click="BtnThem_Click" Background="DodgerBlue" Foreground="White"/>
+                <Button x:Name="btnSua" Content="Sửa" Width="100" Margin="5" 
+                        Click="BtnSua_Click" Background="Gold" Foreground="Black"/>
+                <Button x:Name="btnXoa" Content="Xóa" Width="100" Margin="5" 
+                        Click="BtnXoa_Click" Background="Red" Foreground="White"/>
 
+            </StackPanel>
+        </Grid>
+        
         <!-- DataGrid hiển thị sản phẩm -->
-        <Border Grid.Row="2" BorderThickness="1" BorderBrush="Gray" Padding="5" Margin="5">
+        <Border Grid.Row="3" BorderThickness="1" BorderBrush="Gray" Padding="5" Margin="5">
             <DataGrid x:Name="dgSanPham" AutoGenerateColumns="False" IsReadOnly="True" 
                       SelectionChanged="DgSanPham_SelectionChanged" Loaded="DgSanPham_Loaded">
                 <DataGrid.Columns>
@@ -111,19 +119,6 @@
                             <DataTemplate>
                                 <Image Source="{Binding HinhAnh, Converter={StaticResource ImagePathConverter}}"
                            Width="100" Height="80" Stretch="UniformToFill"/>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Hành động" Width="150">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Content="Sửa" Width="60" Margin="2"
-                                            Background="Gold" Foreground="Black"/>
-
-                                    <Button Content="Xóa" Width="60" Margin="2"
-                                        Background="Red" Foreground="White"/>
-                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

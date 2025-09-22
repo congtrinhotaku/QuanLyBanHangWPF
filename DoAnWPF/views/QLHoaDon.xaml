@@ -16,9 +16,14 @@
         <!-- Thanh công cụ -->
         <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
             <TextBox x:Name="txtTimKiem" Width="200" Height="30" Margin="0 0 10 0" VerticalContentAlignment="Center"/>
-            <Button Content="Tìm kiếm" Width="100" Margin="0 0 10 0"/>
-            <Button Content="Sửa hóa đơn" Width="120" Margin="0 0 10 0" Background="#2196F3" Foreground="White"/>
-            <Button Content="Xóa" Width="80"  Margin="0 0 10 0" Background="#F44336" Foreground="White"/>
+            <Button Content="Tìm kiếm" Width="100" Margin="0 0 10 0"
+                    Click="BtnTimKiem_Click"/>
+            <Button Content="Sửa hóa đơn" Width="120" Margin="0 0 10 0"
+                    Background="#2196F3" Foreground="White"
+                    Click="BtnSua_Click"/>
+            <Button Content="Xóa" Width="80" Margin="0 0 10 0"
+                    Background="#F44336" Foreground="White"
+                    Click="BtnXoa_Click"/>
         </StackPanel>
 
         <!-- Danh sách hóa đơn -->
@@ -28,8 +33,8 @@
                       CanUserAddRows="False"
                       IsReadOnly="True"
                       SelectionMode="Single"
-                      
-                      RowHeight="35">
+                      RowHeight="35"
+                      SelectionChanged="DG_HoaDon_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Mã Hóa Đơn" Binding="{Binding HoaDonID}" Width="*"/>
                     <DataGridTextColumn Header="Ngày Lập" Binding="{Binding NgayLap}" Width="*"/>
@@ -68,7 +73,7 @@
                         <DataGridTextColumn Header="Mã SP" Binding="{Binding SanPhamID}" Width="*"/>
                         <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding TenSanPham}" Width="2*"/>
                         <DataGridTextColumn Header="Đơn vị" Binding="{Binding TenDonVi}" Width="*"/>
-                        <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuong}" Width="*"/>
                         <DataGridTextColumn Header="Đơn giá" Binding="{Binding DonGia}" Width="*"/>
                         <DataGridTextColumn Header="Thành tiền" Binding="{Binding ThanhTien}" Width="*"/>
                     </DataGrid.Columns>
