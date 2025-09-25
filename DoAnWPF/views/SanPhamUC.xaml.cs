@@ -1,8 +1,8 @@
-﻿using DoAnWPF;            // chứa DbContext và entity SanPham
+﻿using DoAnWPF.Model;
+using DoAnWPF.ViewModel;
 using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,41 +10,30 @@ namespace DoAnWPF.views
 {
     public partial class SanPhamUC : UserControl
     {
-        DoanWPFEntities db = new DoanWPFEntities();
+        private SanPhamViewModel spVM = new SanPhamViewModel();
         private string uploadedImagePath = null;
         private int selectedSanPhamId = -1;
 
         public SanPhamUC()
         {
             InitializeComponent();
+            Loaded += SanPhamUC_Loaded;
         }
 
         private void SanPhamUC_Loaded(object sender, RoutedEventArgs e)
         {
-            loadData();
-
-            cbLoaiSanPham.ItemsSource = db.LoaiSanPhams.ToList();
-            cbLoaiSanPham.DisplayMemberPath = "TenLoai";
-            cbLoaiSanPham.SelectedValuePath = "LoaiID";
-
-            cbDonViTinh.ItemsSource = db.DonViTinhs.ToList();
-            cbDonViTinh.DisplayMemberPath = "TenDonVi";
-            cbDonViTinh.SelectedValuePath = "DonViID";
+            LoadData();
+            spVM.LoadLoaiSanPham(cbLoaiSanPham);
+            spVM.LoadDonViTinh(cbDonViTinh);
         }
 
-        public void loadData()
+        private void LoadData()
         {
-            dgSanPham.ItemsSource = db.SanPhams.ToList();
-            dgSanPham.SelectedIndex = -1;
+            dgSanPham.ItemsSource = spVM.GetAllSanPham();
             ClearForm();
         }
 
-        private void DgSanPham_Loaded(object sender, RoutedEventArgs e)
-        {
-            loadData();
-        }
-
-        private void DgSanPham_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void dgSanPham_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (dgSanPham.SelectedItem is SanPham sp)
             {
@@ -62,88 +51,66 @@ namespace DoAnWPF.views
 
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                var sp = new SanPham()
-                {
-                    TenSanPham = txtTenSanPham.Text,
-                    LoaiID = (int)cbLoaiSanPham.SelectedValue,
-                    DonViID = (int)cbDonViTinh.SelectedValue,
-                    SoLuongTon = int.Parse(txtSoLuongTon.Text),
-                    GiaNhap = decimal.Parse(txtGiaNhap.Text),
-                    GiaBan = decimal.Parse(txtGiaBan.Text),
-                    HinhAnh = uploadedImagePath,
-                };
+            if (!ValidateInput()) return;
 
-                db.SanPhams.Add(sp);
-                db.SaveChanges();
-
-                loadData();
-                MessageBox.Show("Thêm sản phẩm thành công!");
-            }
-            catch (Exception ex)
+            var sp = new SanPham
             {
-                MessageBox.Show("Lỗi khi thêm: " + ex.Message);
-            }
+                TenSanPham = txtTenSanPham.Text.Trim(),
+                LoaiID = (int)cbLoaiSanPham.SelectedValue,
+                DonViID = (int)cbDonViTinh.SelectedValue,
+                SoLuongTon = int.Parse(txtSoLuongTon.Text),
+                GiaNhap = decimal.Parse(txtGiaNhap.Text),
+                GiaBan = decimal.Parse(txtGiaBan.Text),
+                HinhAnh = uploadedImagePath
+            };
+
+            spVM.ThemSanPham(sp);
+            MessageBox.Show("Thêm sản phẩm thành công!");
+            LoadData();
         }
 
         private void BtnSua_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (selectedSanPhamId == -1)
             {
-                if (selectedSanPhamId == -1)
-                {
-                    MessageBox.Show("Vui lòng chọn sản phẩm cần sửa!");
-                    return;
-                }
-
-                var sp = db.SanPhams.FirstOrDefault(x => x.SanPhamID == selectedSanPhamId);
-                if (sp != null)
-                {
-                    sp.TenSanPham = txtTenSanPham.Text;
-                    sp.LoaiID = (int)cbLoaiSanPham.SelectedValue;
-                    sp.DonViID = (int)cbDonViTinh.SelectedValue;
-                    sp.SoLuongTon = int.Parse(txtSoLuongTon.Text);
-                    sp.GiaNhap = decimal.Parse(txtGiaNhap.Text);
-                    sp.GiaBan = decimal.Parse(txtGiaBan.Text);
-                    sp.HinhAnh = uploadedImagePath;
-
-                    db.SaveChanges();
-                    loadData();
-                    MessageBox.Show("Cập nhật sản phẩm thành công!");
-                }
+                MessageBox.Show("Vui lòng chọn sản phẩm cần sửa!");
+                return;
             }
-            catch (Exception ex)
+
+            if (!ValidateInput()) return;
+
+            var sp = new SanPham
             {
-                MessageBox.Show("Lỗi khi sửa: " + ex.Message);
-            }
+                SanPhamID = selectedSanPhamId,
+                TenSanPham = txtTenSanPham.Text.Trim(),
+                LoaiID = (int)cbLoaiSanPham.SelectedValue,
+                DonViID = (int)cbDonViTinh.SelectedValue,
+                SoLuongTon = int.Parse(txtSoLuongTon.Text),
+                GiaNhap = decimal.Parse(txtGiaNhap.Text),
+                GiaBan = decimal.Parse(txtGiaBan.Text),
+                HinhAnh = uploadedImagePath
+            };
+
+            spVM.SuaSanPham(sp);
+            MessageBox.Show("Cập nhật sản phẩm thành công!");
+            LoadData();
         }
 
         private void BtnXoa_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (selectedSanPhamId == -1)
             {
-                if (selectedSanPhamId == -1)
-                {
-                    MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!");
-                    return;
-                }
-
-                var sp = db.SanPhams.FirstOrDefault(x => x.SanPhamID == selectedSanPhamId);
-                if (sp != null)
-                {
-                    if (MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-                    {
-                        db.SanPhams.Remove(sp);
-                        db.SaveChanges();
-                        loadData();
-                        MessageBox.Show("Xóa sản phẩm thành công!");
-                    }
-                }
+                MessageBox.Show("Vui lòng chọn sản phẩm cần xóa!");
+                return;
             }
-            catch (Exception ex)
+
+            var sp = spVM.FindSanPham(selectedSanPhamId);
+            if (sp != null && MessageBox.Show("Bạn có chắc chắn muốn xóa?", "Xác nhận",
+                                               MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                MessageBox.Show("Lỗi khi xóa: " + ex.Message);
+                spVM.XoaSanPham(sp);
+                MessageBox.Show("Xóa sản phẩm thành công!");
+                LoadData();
             }
         }
 
@@ -151,13 +118,12 @@ namespace DoAnWPF.views
         {
             OpenFileDialog openFile = new OpenFileDialog();
             openFile.Filter = "Image files (*.jpg;*.jpeg;*.png;*.gif)|*.jpg;*.jpeg;*.png;*.gif";
+
             if (openFile.ShowDialog() == true)
             {
                 string projectDir = Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).Parent.Parent.FullName;
                 string uploadsFolder = Path.Combine(projectDir, "uploads");
-
-                if (!Directory.Exists(uploadsFolder))
-                    Directory.CreateDirectory(uploadsFolder);
+                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
 
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(openFile.FileName);
                 string destPath = Path.Combine(uploadsFolder, fileName);
@@ -182,6 +148,37 @@ namespace DoAnWPF.views
             txtHinhAnh.Clear();
             uploadedImagePath = null;
             selectedSanPhamId = -1;
+        }
+
+        private bool ValidateInput()
+        {
+            if (string.IsNullOrWhiteSpace(txtTenSanPham.Text))
+            {
+                MessageBox.Show("Tên sản phẩm không được bỏ trống!");
+                return false;
+            }
+
+            if (cbLoaiSanPham.SelectedIndex == -1)
+            {
+                MessageBox.Show("Vui lòng chọn loại sản phẩm!");
+                return false;
+            }
+
+            if (cbDonViTinh.SelectedIndex == -1)
+            {
+                MessageBox.Show("Vui lòng chọn đơn vị tính!");
+                return false;
+            }
+
+            if (!int.TryParse(txtSoLuongTon.Text, out _) ||
+                !decimal.TryParse(txtGiaNhap.Text, out _) ||
+                !decimal.TryParse(txtGiaBan.Text, out _))
+            {
+                MessageBox.Show("Vui lòng nhập số hợp lệ cho số lượng, giá nhập và giá bán!");
+                return false;
+            }
+
+            return true;
         }
     }
 }

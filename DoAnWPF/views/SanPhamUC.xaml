@@ -32,7 +32,7 @@
                 <!-- Cột 1 -->
                 <StackPanel Margin="5">
                     <TextBlock Text="Tên sản phẩm"/>
-                    <TextBox x:Name="txtTenSanPham"/>
+                    <TextBox x:Name="txtTenSanPham" />
                 </StackPanel>
 
                 <!-- Cột 2 -->
@@ -105,7 +105,7 @@
         <!-- DataGrid hiển thị sản phẩm -->
         <Border Grid.Row="3" BorderThickness="1" BorderBrush="Gray" Padding="5" Margin="5">
             <DataGrid x:Name="dgSanPham" AutoGenerateColumns="False" IsReadOnly="True" 
-                      SelectionChanged="DgSanPham_SelectionChanged" Loaded="DgSanPham_Loaded">
+                      SelectionChanged="dgSanPham_SelectionChanged" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="ID" Binding="{Binding SanPhamID}" Width="50"/>
                     <DataGridTextColumn Header="Tên sản phẩm" Binding="{Binding TenSanPham}" Width="200"/>

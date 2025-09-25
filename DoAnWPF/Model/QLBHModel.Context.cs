@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DoAnWPF
+namespace DoAnWPF.Model
 {
     using System;
     using System.Data.Entity;

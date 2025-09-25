@@ -1,26 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DoAnWPF.Model;
+using DoAnWPF.ViewModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace DoAnWPF.views
 {
-    /// <summary>
-    /// Interaction logic for QLKH.xaml
-    /// </summary>
     public partial class QLKH : UserControl
     {
-        private DoanWPFEntities _db = new DoanWPFEntities();
+        private KhachHangViewModel khVM = new KhachHangViewModel();
+        private HoaDonViewModel hdVM = new HoaDonViewModel();
         private int selectedKhachHangId = -1; // lưu ID khi chọn trên DataGrid
 
         public QLKH()
@@ -29,41 +18,32 @@ namespace DoAnWPF.views
             LoadData();
         }
 
-        // Load danh sách khách hàng + hóa đơn
+        // Load danh sách khách hàng + tất cả hóa đơn
         private void LoadData()
         {
-            DataKhachHang.ItemsSource = _db.KhachHangs.ToList();
-            dataHoaDon.ItemsSource = _db.HoaDons.ToList();
+            DataKhachHang.ItemsSource = khVM.GetAllKhachHang();
+            dataHoaDon.ItemsSource = hdVM.LoadHoaDon();
+            ClearForm();
         }
 
         // Thêm khách hàng
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
-            try
+            if (string.IsNullOrWhiteSpace(txt_TenKhachHang.Text))
             {
-                if (string.IsNullOrWhiteSpace(txt_TenKhachHang.Text))
-                {
-                    MessageBox.Show("Tên khách hàng không được bỏ trống!");
-                    return;
-                }
-
-                var kh = new KhachHang
-                {
-                    TenKhach = txt_TenKhachHang.Text.Trim(),
-                    DienThoai = txt_sdtkh.Text.Trim()
-                };
-
-                _db.KhachHangs.Add(kh);
-                _db.SaveChanges();
-
-                MessageBox.Show("Thêm khách hàng thành công!");
-                LoadData();
-                ClearForm();
+                MessageBox.Show("Tên khách hàng không được bỏ trống!");
+                return;
             }
-            catch (Exception ex)
+
+            var kh = new KhachHang
             {
-                MessageBox.Show("Lỗi thêm khách hàng: " + ex.Message);
-            }
+                TenKhach = txt_TenKhachHang.Text.Trim(),
+                DienThoai = txt_sdtkh.Text.Trim()
+            };
+
+            khVM.ThemKhachHang(kh);
+            MessageBox.Show("Thêm khách hàng thành công!");
+            LoadData();
         }
 
         // Xóa khách hàng
@@ -75,21 +55,16 @@ namespace DoAnWPF.views
                 return;
             }
 
-            try
+            var kh = khVM.FindKhachHang(selectedKhachHangId);
+            if (kh != null)
             {
-                var kh = _db.KhachHangs.FirstOrDefault(k => k.KhachHangID == selectedKhachHangId);
-                if (kh != null)
+                if (MessageBox.Show("Bạn có chắc muốn xóa khách hàng này?", "Xác nhận",
+                                    MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                 {
-                    _db.KhachHangs.Remove(kh);
-                    _db.SaveChanges();
-                    MessageBox.Show("Xóa thành công!");
+                    khVM.XoaKhachHang(kh);
+                    MessageBox.Show("Xóa khách hàng thành công!");
                     LoadData();
-                    ClearForm();
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi xóa khách hàng: " + ex.Message);
             }
         }
 
@@ -102,23 +77,15 @@ namespace DoAnWPF.views
                 return;
             }
 
-            try
+            var kh = khVM.FindKhachHang(selectedKhachHangId);
+            if (kh != null)
             {
-                var kh = _db.KhachHangs.FirstOrDefault(k => k.KhachHangID == selectedKhachHangId);
-                if (kh != null)
-                {
-                    kh.TenKhach = txt_TenKhachHang.Text.Trim();
-                    kh.DienThoai = txt_sdtkh.Text.Trim();
+                kh.TenKhach = txt_TenKhachHang.Text.Trim();
+                kh.DienThoai = txt_sdtkh.Text.Trim();
 
-                    _db.SaveChanges();
-                    MessageBox.Show("Cập nhật thành công!");
-                    LoadData();
-                    ClearForm();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi sửa khách hàng: " + ex.Message);
+                khVM.SuaKhachHang(kh);
+                MessageBox.Show("Cập nhật khách hàng thành công!");
+                LoadData();
             }
         }
 
@@ -132,17 +99,15 @@ namespace DoAnWPF.views
                 txt_sdtkh.Text = kh.DienThoai;
 
                 // Load hóa đơn theo khách hàng
-                dataHoaDon.ItemsSource = _db.HoaDons
-                                           .Where(hd => hd.KhachHangID == kh.KhachHangID)
-                                           .ToList();
+                dataHoaDon.ItemsSource = hdVM.GetHoaDonByKhachHangId(kh.KhachHangID);
             }
         }
 
         // Hàm clear form
         private void ClearForm()
         {
-            txt_TenKhachHang.Text = "";
-            txt_sdtkh.Text = "";
+            txt_TenKhachHang.Clear();
+            txt_sdtkh.Clear();
             selectedKhachHangId = -1;
         }
     }

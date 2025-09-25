@@ -7,27 +7,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DoAnWPF
+namespace DoAnWPF.Model
 {
     using System;
     using System.Collections.Generic;
     
-    public partial class HoaDon
+    public partial class KhachHang
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public HoaDon()
+        public KhachHang()
         {
-            this.ChiTietHoaDons = new HashSet<ChiTietHoaDon>();
+            this.HoaDons = new HashSet<HoaDon>();
         }
     
-        public int HoaDonID { get; set; }
-        public System.DateTime NgayLap { get; set; }
-        public string NguoiLap { get; set; }
-        public Nullable<int> KhachHangID { get; set; }
-        public decimal TongTien { get; set; }
+        public int KhachHangID { get; set; }
+        public string TenKhach { get; set; }
+        public string DienThoai { get; set; }
+        public string DiaChi { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ChiTietHoaDon> ChiTietHoaDons { get; set; }
-        public virtual KhachHang KhachHang { get; set; }
+        public virtual ICollection<HoaDon> HoaDons { get; set; }
     }
 }

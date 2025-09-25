@@ -101,7 +101,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0" Orientation="Vertical">
@@ -111,9 +110,7 @@
 
                     <Button Grid.Column="1" Content="Tìm" Width="60" Margin="6,22,0,0"
                 Click="FindCustomer_Click"/>
-                    <Button Grid.Column="2" Content="Submit" Width="80" Margin="6,22,0,0"
-                Background="Green" Foreground="White"
-                Click="Button_Click"/>
+                
                 </Grid>
             </StackPanel>
 

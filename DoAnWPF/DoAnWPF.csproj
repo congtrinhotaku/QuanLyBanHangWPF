@@ -70,38 +70,45 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ChiTietHoaDon.cs">
+    <Compile Include="Model\ChiTietHoaDon.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="DonViTinh.cs">
+    <Compile Include="Model\DonViTinh.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="HoaDon.cs">
+    <Compile Include="Model\HoaDon.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModel\ChiTietHoaDonViewModel.cs" />
+    <Compile Include="ViewModel\DonViTinhViewModel.cs" />
+    <Compile Include="ViewModel\HoaDonViewModel.cs" />
+    <Compile Include="ViewModel\KhachHangViewModel.cs" />
+    <Compile Include="ViewModel\LoaiSanPhamViewModel.cs" />
+    <Compile Include="ViewModel\PosViewModel.cs" />
+    <Compile Include="ViewModel\SanPhamViewModel.cs" />
     <Compile Include="views\ImagePathConverter.cs" />
-    <Compile Include="KhachHang.cs">
+    <Compile Include="Model\KhachHang.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="LoaiSanPham.cs">
+    <Compile Include="Model\LoaiSanPham.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="QLBHModel.Context.cs">
+    <Compile Include="Model\QLBHModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>QLBHModel.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="QLBHModel.cs">
+    <Compile Include="Model\QLBHModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="QLBHModel.Designer.cs">
+    <Compile Include="Model\QLBHModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>QLBHModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="SanPham.cs">
+    <Compile Include="Model\SanPham.cs">
       <DependentUpon>QLBHModel.tt</DependentUpon>
     </Compile>
     <Compile Include="views\pos.xaml.cs">
@@ -182,11 +189,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EntityDeploy Include="QLBHModel.edmx">
+    <EntityDeploy Include="Model\QLBHModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>QLBHModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="QLBHModel.edmx.diagram">
+    <None Include="Model\QLBHModel.edmx.diagram">
       <DependentUpon>QLBHModel.edmx</DependentUpon>
     </None>
   </ItemGroup>
@@ -197,12 +204,12 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="QLBHModel.Context.tt">
+    <Content Include="Model\QLBHModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>QLBHModel.edmx</DependentUpon>
       <LastGenOutput>QLBHModel.Context.cs</LastGenOutput>
     </Content>
-    <Content Include="QLBHModel.tt">
+    <Content Include="Model\QLBHModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <DependentUpon>QLBHModel.edmx</DependentUpon>
       <LastGenOutput>QLBHModel.cs</LastGenOutput>

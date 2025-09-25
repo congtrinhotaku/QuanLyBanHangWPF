@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DoAnWPF.Model;
+using DoAnWPF.ViewModel;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,8 +9,10 @@ namespace DoAnWPF.views
 {
     public partial class QLHoaDon : UserControl
     {
-        DoanWPFEntities db = new DoanWPFEntities();
-        private int selectedHoaDonId = -1;
+        private HoaDonViewModel hdVM = new HoaDonViewModel();
+        private KhachHangViewModel khVM = new KhachHangViewModel();
+
+        private HoaDon selectedHoaDon;
 
         public QLHoaDon()
         {
@@ -16,130 +20,121 @@ namespace DoAnWPF.views
             LoadHoaDon();
         }
 
-        // Load danh sách hóa đơn
-        private void LoadHoaDon(string keyword = "")
+        // Load tất cả hóa đơn
+        private void LoadHoaDon()
         {
-            var query = db.HoaDons.AsQueryable();
+            var data = hdVM.LoadHoaDon();
 
-            if (!string.IsNullOrWhiteSpace(keyword))
+            DG_HoaDon.ItemsSource = data.Select(hd => new
             {
-                query = query.Where(hd => hd.KhachHang.TenKhach.Contains(keyword));
-            }
-
-            var data = query
-                .Select(hd => new
-                {
-                    hd.HoaDonID,
-                    hd.NgayLap,
-                    TenKhach = hd.KhachHang != null ? hd.KhachHang.TenKhach : "Khách lẻ",
-                    hd.TongTien
-                })
-                .ToList();
-
-            DG_HoaDon.ItemsSource = data;
+                hd.HoaDonID,
+                hd.NgayLap,
+                TenKhach = hd.KhachHang != null ? hd.KhachHang.TenKhach : "Khách lẻ",
+                hd.TongTien
+            }).ToList();
         }
 
-        // Khi chọn hóa đơn → load chi tiết
+        // Khi chọn hóa đơn
         private void DG_HoaDon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DG_HoaDon.SelectedItem == null) return;
 
             dynamic row = DG_HoaDon.SelectedItem;
-            selectedHoaDonId = row.HoaDonID;
+            int id = row.HoaDonID;
 
-            var hd = db.HoaDons.FirstOrDefault(x => x.HoaDonID == selectedHoaDonId);
-            if (hd != null)
+            selectedHoaDon = hdVM.FindHoaDon(id);
+
+            if (selectedHoaDon != null)
             {
-                txtMaHD.Text = hd.HoaDonID.ToString();
-                txtNgayLap.Text = hd.NgayLap.ToString("dd/MM/yyyy");
-                txtKhachHang.Text = hd.KhachHang != null ? hd.KhachHang.TenKhach : "Khách lẻ";
+                txtMaHD.Text = selectedHoaDon.HoaDonID.ToString();
+                txtNgayLap.Text = selectedHoaDon.NgayLap.ToString("dd/MM/yyyy");
+                txtKhachHang.Text = selectedHoaDon.KhachHang != null ? selectedHoaDon.KhachHang.TenKhach : "Khách lẻ";
 
-                var chiTiet = hd.ChiTietHoaDons.Select(ct => new
-                {
-                    ct.SanPhamID,
-                    TenSanPham = ct.SanPham.TenSanPham,
-                    TenDonVi = ct.SanPham.DonViTinh.TenDonVi,
-                    ct.SoLuong,
-                    ct.DonGia,
-                    ct.ThanhTien
-                }).ToList();
-
-                DG_ChiTiet.ItemsSource = chiTiet;
+                DG_ChiTiet.ItemsSource = hdVM.LoadChiTiet(id);
             }
         }
 
-        // Tìm kiếm
+        // Tìm theo mã hóa đơn (Find)
         private void BtnTimKiem_Click(object sender, RoutedEventArgs e)
         {
-            LoadHoaDon(txtTimKiem.Text.Trim());
+            if (int.TryParse(txtTimKiem.Text.Trim(), out int maHD))
+            {
+                var hd = hdVM.FindHoaDon(maHD);
+                if (hd != null)
+                {
+                    DG_HoaDon.ItemsSource = new[]
+                    {
+                        new {
+                            hd.HoaDonID,
+                            hd.NgayLap,
+                            TenKhach = hd.KhachHang != null ? hd.KhachHang.TenKhach : "Khách lẻ",
+                            hd.TongTien
+                        }
+                    }.ToList();
+                    selectedHoaDon = hd;
+                    DG_ChiTiet.ItemsSource = hdVM.LoadChiTiet(maHD);
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy hóa đơn!");
+                    LoadHoaDon();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng nhập mã hóa đơn hợp lệ!");
+            }
         }
 
         // Xóa hóa đơn
         private void BtnXoa_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedHoaDonId == -1)
+            if (selectedHoaDon == null)
             {
                 MessageBox.Show("Vui lòng chọn hóa đơn cần xóa!");
                 return;
             }
 
-            if (MessageBox.Show("Bạn có chắc chắn muốn xóa hóa đơn này?", "Xác nhận", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Bạn có chắc chắn muốn xóa hóa đơn này?", "Xác nhận",
+                                MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                var hd = db.HoaDons.FirstOrDefault(x => x.HoaDonID == selectedHoaDonId);
-                if (hd != null)
-                {
-                    // Xóa chi tiết trước
-                    db.ChiTietHoaDons.RemoveRange(hd.ChiTietHoaDons);
-                    db.HoaDons.Remove(hd);
-                    db.SaveChanges();
+                hdVM.XoaHoaDon(selectedHoaDon);
+                LoadHoaDon();
+                DG_ChiTiet.ItemsSource = null;
+                txtMaHD.Clear();
+                txtNgayLap.Clear();
+                txtKhachHang.Clear();
+                selectedHoaDon = null;
 
-                    LoadHoaDon();
-                    DG_ChiTiet.ItemsSource = null;
-                    txtMaHD.Clear();
-                    txtNgayLap.Clear();
-                    txtKhachHang.Clear();
-
-                    MessageBox.Show("Xóa hóa đơn thành công!");
-                }
+                MessageBox.Show("Xóa hóa đơn thành công!");
             }
         }
 
-        // Sửa hóa đơn (chỉ demo sửa ngày lập và khách hàng)
         private void BtnSua_Click(object sender, RoutedEventArgs e)
         {
-            if (selectedHoaDonId == -1)
+            if (selectedHoaDon == null)
             {
                 MessageBox.Show("Vui lòng chọn hóa đơn cần sửa!");
                 return;
             }
 
-            var hd = db.HoaDons.FirstOrDefault(x => x.HoaDonID == selectedHoaDonId);
-            if (hd != null)
+            DateTime? ngayCapNhat = null;
+            if (DateTime.TryParse(txtNgayLap.Text, out DateTime tmpDate))
             {
-                try
-                {
-                    // giả sử chỉ cho phép sửa ngày lập và khách hàng
-                    if (DateTime.TryParse(txtNgayLap.Text, out DateTime newDate))
-                    {
-                        hd.NgayLap = newDate;
-                    }
-                    if (!string.IsNullOrWhiteSpace(txtKhachHang.Text))
-                    {
-                        var kh = db.KhachHangs.FirstOrDefault(k => k.TenKhach == txtKhachHang.Text);
-                        if (kh != null)
-                        {
-                            hd.KhachHangID = kh.KhachHangID;
-                        }
-                    }
+                ngayCapNhat = tmpDate;
+            }
 
-                    db.SaveChanges();
-                    LoadHoaDon();
-                    MessageBox.Show("Sửa hóa đơn thành công!");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi sửa: " + ex.Message);
-                }
+            string tenKh = txtKhachHang.Text.Trim();
+
+            bool ok = hdVM.SuaHoaDon(selectedHoaDon.HoaDonID, ngayCapNhat, tenKh);
+            if (ok)
+            {
+                LoadHoaDon();
+                MessageBox.Show("Sửa hóa đơn thành công!");
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy hóa đơn để sửa!");
             }
         }
     }

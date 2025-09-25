@@ -21,17 +21,18 @@
 
         <!-- Các nút chức năng -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0 0 0 10">
-            <Button x:Name="btnThemLoai" Content="Thêm" Margin="5" Width="100"/>
-            <Button x:Name="btnXoaLoai" Content="Xóa" Margin="5" Width="100"/>
-            <Button x:Name="btnSuaLoai" Content="Sửa" Margin="5" Width="100"/>
+            <Button x:Name="btnThemLoai" Content="Thêm" Margin="5" Width="100" Click="btnThemLoai_Click"/>
+            <Button x:Name="btnXoaLoai" Content="Xóa" Margin="5" Width="100" Click="btnXoaLoai_Click"/>
+            <Button x:Name="btnSuaLoai" Content="Sửa" Margin="5" Width="100" Click="btnSuaLoai_Click"/>
         </StackPanel>
 
         <!-- Bảng danh sách loại sản phẩm -->
         <DataGrid Grid.Row="2" x:Name="dtgLoaiSP" AutoGenerateColumns="False" 
-                  ColumnWidth="*" IsReadOnly="True" SelectionMode="Single">
+                  ColumnWidth="*" IsReadOnly="True" SelectionMode="Single"
+                  SelectionChanged="dtgLoaiSP_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="100"/>
-                <DataGridTextColumn Header="Loại sản phẩm" Binding="{Binding DisplayName}" Width="*"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding LoaiID}" Width="100"/>
+                <DataGridTextColumn Header="Loại sản phẩm" Binding="{Binding TenLoai}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

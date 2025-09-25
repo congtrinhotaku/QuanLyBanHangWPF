@@ -1,6 +1,5 @@
-﻿using DoAnWPF;
-using System;
-using System.Collections.ObjectModel;
+﻿using DoAnWPF.Model;
+using DoAnWPF.ViewModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,218 +8,157 @@ namespace DoAnWPF.Views
 {
     public partial class pos : UserControl
     {
-        private DoanWPFEntities _db = new DoanWPFEntities();
-        public ObservableCollection<CartItem> Cart { get; set; } = new ObservableCollection<CartItem>();
-
+        private PosViewModel vm = new PosViewModel();
+        private KhachHangViewModel khVm = new KhachHangViewModel();
         public pos()
         {
             InitializeComponent();
-
-            // Load categories
-            CategoryList.ItemsSource = _db.LoaiSanPhams.ToList();
-
-            // Load products
-            ProductsControl.ItemsSource = _db.SanPhams.ToList();
-
-            // Bind cart
-            CartList.ItemsSource = Cart;
+            LoadCategories();
+            LoadProducts();
+            RefreshCart();
+            resetKH();
         }
 
-        // Khi click vào category
-        private void Category_Click(object sender, RoutedEventArgs e)
+       
+        private void LoadCategories()
         {
-            if (sender is Button btn && btn.DataContext is LoaiSanPham loai)
-            {
-                ProductsControl.ItemsSource = _db.SanPhams
-                                                .Where(sp => sp.LoaiID == loai.LoaiID)
-                                                .ToList();
-            }
+            CategoryList.ItemsSource = vm.LoadLoaiSanPham();
         }
+
+        private void LoadProducts()
+        {
+            ProductsControl.ItemsSource = vm.LoadSanPham();
+        }
+
+        private void LoadProductsByCategory(int loaiId)
+        {
+            ProductsControl.ItemsSource = vm.LoadSanPhamByLoai(loaiId);
+        }
+
+        private void RefreshCart()
+        {
+            CartList.ItemsSource = null;
+            CartList.ItemsSource = vm.Cart;
+            TotalTextBlock.Text = $"Thành tiền: {vm.GetTotal():N0} đ";
+        }
+
         private void AllCategory_Click(object sender, RoutedEventArgs e)
         {
-            ProductsControl.ItemsSource = _db.SanPhams.ToList();
+            LoadProducts();
         }
 
+        private void Category_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var loai = btn?.DataContext as LoaiSanPham;
+            if (loai != null)
+            {
+                LoadProductsByCategory(loai.LoaiID);
+            }
+        }
 
-        // Khi click vào product
         private void Product_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is SanPham sp)
+            var btn = sender as Button;
+            var sp = btn?.DataContext as SanPham;
+            if (sp != null)
             {
-                var existing = Cart.FirstOrDefault(c => c.SanPhamID == sp.SanPhamID);
-                if (existing != null)
-                {
-                    existing.Quantity++;
-                    existing.UpdateTotal();
-                }
-                else
-                {
-                    var newItem = new CartItem
-                    {
-                        SanPhamID = sp.SanPhamID,
-                        Name = sp.TenSanPham,
-                        Price = sp.GiaBan,
-                        Quantity = 1
-                    };
-                    newItem.UpdateTotal();
-                    Cart.Add(newItem);
-                }
-                UpdateTotalText();
-                CartList.Items.Refresh();
+                vm.AddToCart(sp);
+                RefreshCart();
             }
         }
 
-        // Tăng số lượng
         private void Increase_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is CartItem item)
+            var btn = sender as Button;
+            var item = btn?.DataContext as CartItem;
+            if (item != null)
             {
-                item.Quantity++;
-                item.UpdateTotal();
-                UpdateTotalText();
-                CartList.Items.Refresh();
+                var sp = vm.LoadSanPham().FirstOrDefault(s => s.SanPhamID == item.SanPhamID);
+                if (sp != null)
+                {
+                    vm.AddToCart(sp, 1);
+                    RefreshCart();
+                }
             }
         }
 
-        // Giảm số lượng
         private void Decrease_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button btn && btn.DataContext is CartItem item)
+            var btn = sender as Button;
+            var item = btn?.DataContext as CartItem;
+            if (item != null)
             {
-                if (item.Quantity > 1)
-                {
-                    item.Quantity--;
-                    item.UpdateTotal();
-                }
-                else
-                {
-                    Cart.Remove(item);
-                }
-                UpdateTotalText();
-                CartList.Items.Refresh();
+                vm.DecreaseFromCart(item.SanPhamID);
+                RefreshCart();
             }
-        }
-
-        // Update tổng tiền
-        private void UpdateTotalText()
-        {
-            decimal total = Cart.Sum(c => c.Total);
-            TotalTextBlock.Text = $"Thành tiền: {total:N0} đ";
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            try
+            var customer = CustomerName.Text.Trim();
+            var phone = CustomerPhone.Text.Trim();
+            KhachHang kh = null;
+
+            if (string.IsNullOrEmpty(customer) || string.IsNullOrEmpty(phone))
             {
-                // ✅ Lấy thông tin khách hàng từ giao diện
-                string soDienThoai = CustomerPhone.Text.Trim();
-                if (string.IsNullOrEmpty(soDienThoai)) soDienThoai = "0";
+          
+                var result = MessageBox.Show(
+                    "Bạn có muốn thanh toán với khách hàng ẩn danh không?",
+                    "Xác nhận",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question
+                );
 
-                string tenKhach = CustomerName.Text.Trim();
-                if (string.IsNullOrEmpty(tenKhach)) tenKhach = "Anonymous";
+                if (result == MessageBoxResult.No)
+                    return;
 
-                // ✅ Tìm khách hàng trong DB theo số điện thoại
-                var khach = _db.KhachHangs.FirstOrDefault(k => k.DienThoai == soDienThoai);
-                if (khach == null)
-                {
-                    khach = new KhachHang
-                    {
-                        TenKhach = tenKhach,
-                        DienThoai = soDienThoai
-                    };
-                    _db.KhachHangs.Add(khach);
-                    _db.SaveChanges();
-                }
-
-                // ✅ Tạo hóa đơn mới
-                var hoaDon = new HoaDon
-                {
-                    KhachHangID = khach.KhachHangID,
-                    NgayLap = DateTime.Now,
-                    NguoiLap = "Chủ cửa hàng",
-                    TongTien = Cart.Sum(c => c.Total)
-                };
-                _db.HoaDons.Add(hoaDon);
-                _db.SaveChanges();
-
-                // ✅ Lưu chi tiết hóa đơn
-                foreach (var item in Cart)
-                {
-                    var cthd = new ChiTietHoaDon
-                    {
-                        HoaDonID = hoaDon.HoaDonID,
-                        SanPhamID = item.SanPhamID,
-                        SoLuong = item.Quantity,
-                        DonGia = item.Price
-                    };
-                    _db.ChiTietHoaDons.Add(cthd);
-
-                    // Giảm số lượng tồn trong bảng sản phẩm
-                    var sp = _db.SanPhams.FirstOrDefault(s => s.SanPhamID == item.SanPhamID);
-                    if (sp != null)
-                    {
-                        sp.SoLuongTon -= item.Quantity;
-                    }
-                }
-                _db.SaveChanges();
-
-                // ✅ Thông báo thành công
-                MessageBox.Show($"Thanh toán thành công!\nMã hóa đơn: {hoaDon.HoaDonID}\nTổng tiền: {hoaDon.TongTien:N0} đ",
-                                "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                // ✅ Reset giỏ hàng
-                Cart.Clear();
-                UpdateTotalText();
-                CartList.Items.Refresh();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi thanh toán: " + ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-        // ✅ Tìm khách hàng theo số điện thoại
-        private void FindCustomer_Click(object sender, RoutedEventArgs e)
-        {
-            string phone = CustomerPhone.Text.Trim();
-            if (!string.IsNullOrEmpty(phone))
-            {
-                var khach = _db.KhachHangs.FirstOrDefault(k => k.DienThoai == phone);
-                if (khach != null)
-                {
-                    CustomerName.Text = khach.TenKhach; // điền tên vào textbox
-                    MessageBox.Show("Đã tìm thấy khách hàng: " + khach.TenKhach, "Thông báo");
-                }
-                else
-                {
-                    MessageBox.Show("Không tìm thấy khách hàng với số điện thoại này!", "Thông báo");
-                }
+             
+                kh = khVm.GetByPhone("0");
             }
             else
             {
-                MessageBox.Show("Vui lòng nhập số điện thoại để tìm.", "Cảnh báo");
+             
+                kh = khVm.GetByPhone(phone);
+                if (kh == null)
+                {
+                    kh = new KhachHang
+                    {
+                        TenKhach = customer,
+                        DienThoai = phone,
+                        DiaChi = ""
+                    };
+                    khVm.ThemKhachHang(kh);
+                }
             }
+
+            vm.ThanhToan(kh.KhachHangID);
+            RefreshCart();
+            resetKH();
+            MessageBox.Show("Thanh toán thành công!");
         }
 
-    }
 
-
-    // Model giỏ hàng
-    public class CartItem
-    {
-        public int SanPhamID { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public decimal Total { get; set; }
-
-        public void UpdateTotal()
+        private void FindCustomer_Click(object sender, RoutedEventArgs e)
         {
-            Total = Price * Quantity;
+            var phone = CustomerPhone.Text.Trim();
+            var khVm = new KhachHangViewModel();
+            var kh = khVm.GetByPhone(phone);
+
+            if (kh != null)
+            {
+                CustomerName.Text = kh.TenKhach;
+                MessageBox.Show("Đã tìm thấy khách hàng!");
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy khách hàng, vui lòng nhập thông tin mới!");
+            }
+        }
+        private void resetKH()
+        {
+            CustomerName.Text = null;
+            CustomerPhone.Text = null;
         }
     }
 }

@@ -28,10 +28,10 @@
 
         <!-- Bảng danh sách đơn vị tính -->
         <DataGrid Grid.Row="2" x:Name="dtgDVT" AutoGenerateColumns="False" 
-                  ColumnWidth="*" IsReadOnly="True" SelectionMode="Single">
+                  ColumnWidth="*" IsReadOnly="True" SelectionMode="Single" SelectionChanged="dtgDVT_SelectionChanged_1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="100"/>
-                <DataGridTextColumn Header="Đơn vị tính" Binding="{Binding DisplayName}" Width="*"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding DonViID}" Width="100"/>
+                <DataGridTextColumn Header="Đơn vị tính" Binding="{Binding TenDonVi}" Width="*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
